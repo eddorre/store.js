@@ -42,7 +42,7 @@ var store = (function(){
 			storage.setAttribute(key, val)
 			storage.save(name)
 		}
-		api.setObject = function(key, value){
+		api.setObject = function(key, val){
 			if (!storage) { createStorage() }
 			storage.setAttribute(key, JSON.stringify(val));
 			storage.save(name);
@@ -51,10 +51,9 @@ var store = (function(){
 			if (!storage) { createStorage() }
 			return storage.getAttribute(key)
 		}
-		api.getObject = function(key, value){
+		api.getObject = function(key){
 			if (!storage) { createStorage() }
-			var value = storage.getAttribute(key, val);
-			if (value) { JSON.parse(value) }
+			return JSON.parse(storage.getAttribute(key));
 		}
 		api.remove = function(key) {
 			if (!storage) { createStorage() }
