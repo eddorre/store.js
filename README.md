@@ -4,24 +4,24 @@ store.js
 store.js exposes a simple API for cross browser local store
 
 	// Store 'marcus' at 'username'
-	store.set('username', 'marcus')
+	store.set('username', 'marcus');
 	
 	// Get 'username'
-	store.get('username')
+	store.get('username');
 	
 	// Remove 'username'
-	store.remove('username')
+	store.remove('username');
 	
 	// Clear all keys
-	store.clear()
+	store.clear();
 	
 	// Use JSON to stash an object (see http://www.json.org/json2.js)
-	store.set('user', JSON.stringify({ name: 'marcus', likes: 'javascript' }))
+	store.setObject('user', { name: 'marcus', likes: 'javascript' });
 	
 	// Use JSON to retrieve an object (see http://www.json.org/json2.js)
-	var user = JSON.parse(store.get('user'))
-	alert(user.name + ' likes ' + user.likes)
-
+	var user = store.getObject('user');
+	alert(user.name + ' likes ' + user.likes);
+	
 Tests
 -----
 Go to test.html in your browser.
