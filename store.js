@@ -17,7 +17,7 @@ var store = (function(){
 		api.set = function(key, val) { storage[key] = val }
 		api.setObject = function(key, val) { storage[key] = JSON.stringify(val) }
 		api.get = function(key) { return storage[key] }
-		api.getObject = function(key) { return JSON.parse(storage[key]) }
+		api.getObject = function(key) { if (storage[key]) { return JSON.parse(storage[key]) } }
 		api.remove = function(key) { delete storage[key] }
 		api.clear = function() { storage.clear() }
 	} else if (win.globalStorage) {
@@ -25,7 +25,7 @@ var store = (function(){
 		api.set = function(key, val) { storage[key] = val }
 		api.setObject = function(key, val) { storage[key] = JSON.stringify(val) }
 		api.get = function(key) { return storage[key] && storage[key].value }
-		api.getObject = function(key) { return storage[key] && JSON.parse(storage[key]) }
+		api.getObject = function(key) { if (storage[key]) { return storage[key] && JSON.parse(storage[key]) } }
 		api.remove = function(key) { delete storage[key] }
 		api.clear = function() { for (var key in storage ) { delete storage[key] } }
 	} else if (doc.documentElement.addBehavior) {
@@ -53,7 +53,8 @@ var store = (function(){
 		}
 		api.getObject = function(key, value){
 			if (!storage) { createStorage() }
-			return storage.getAttribute(key, JSON.parse(val));
+			var value = storage.getAttribute(key, val);
+			if (value) { JSON.parse(value) }
 		}
 		api.remove = function(key) {
 			if (!storage) { createStorage() }
