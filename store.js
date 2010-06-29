@@ -6,20 +6,26 @@ var store = (function(){
 		storage
 	
 	api.set = function(key, value) {}
+	api.setObject = function(key, value) {}
 	api.get = function(key) {}
+	api.getObject = function(key, value) {}
 	api.remove = function(key) {}
 	api.clear = function() {}
 	
 	if (win.localStorage) {
 		storage = win.localStorage
 		api.set = function(key, val) { storage[key] = val }
+		api.setObject = function(key, val) { storage[key] = JSON.stringify(val) }
 		api.get = function(key) { return storage[key] }
+		api.getObject = function(key) { return JSON.parse(storage[key]) }
 		api.remove = function(key) { delete storage[key] }
 		api.clear = function() { storage.clear() }
 	} else if (win.globalStorage) {
 		storage = win.globalStorage[win.location.hostname]
 		api.set = function(key, val) { storage[key] = val }
+		api.setObject = function(key, val) { storage[key] = JSON.stringify(val) }
 		api.get = function(key) { return storage[key] && storage[key].value }
+		api.getObject = function(key) { return storage[key] && JSON.parse(storage[key]) }
 		api.remove = function(key) { delete storage[key] }
 		api.clear = function() { for (var key in storage ) { delete storage[key] } }
 	} else if (doc.documentElement.addBehavior) {
@@ -36,9 +42,18 @@ var store = (function(){
 			storage.setAttribute(key, val)
 			storage.save(name)
 		}
+		api.setObject = function(key, value){
+			if (!storage) { createStorage() }
+			storage.setAttribute(key, JSON.stringify(val));
+			storage.save(name);
+		}
 		api.get = function(key) {
 			if (!storage) { createStorage() }
 			return storage.getAttribute(key)
+		}
+		api.getObject = function(key, value){
+			if (!storage) { createStorage() }
+			return storage.getAttribute(key, JSON.parse(val));
 		}
 		api.remove = function(key) {
 			if (!storage) { createStorage() }
