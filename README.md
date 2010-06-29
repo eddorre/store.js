@@ -15,6 +15,9 @@ store.js exposes a simple API for cross browser local store
 	// Clear all keys
 	store.clear();
 	
+	In order to use setObject and getObject your browser needs be able to parse and stringify JSON.
+	If your browser doesn't have such capability, download http://www.json.org/json2.js.
+	
 	// Use JSON to stash an object (see http://www.json.org/json2.js)
 	store.setObject('user', { name: 'marcus', likes: 'javascript' });
 	
