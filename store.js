@@ -2,7 +2,8 @@ var store = (function(){
 	var api = {},
 		win = window,
 		doc = win.document,
-		name = 'localStorage',
+		localStorageName = 'localStorage',
+		globalStorageName = 'globalStorage',
 		storage
 	
 	api.set = function(key, value) {}
@@ -12,16 +13,16 @@ var store = (function(){
 	api.remove = function(key) {}
 	api.clear = function() {}
 	
-	if (win.localStorage) {
-		storage = win.localStorage
+	if (localStorageName in win && win[localStorageName]) {
+		storage = win[localStorageName]
 		api.set = function(key, val) { storage[key] = val }
 		api.setObject = function(key, val) { storage[key] = JSON.stringify(val) }
 		api.get = function(key) { return storage[key] }
 		api.getObject = function(key) { if (storage[key]) { return JSON.parse(storage[key]) } }
 		api.remove = function(key) { delete storage[key] }
 		api.clear = function() { storage.clear() }
-	} else if (win.globalStorage) {
-		storage = win.globalStorage[win.location.hostname]
+	} else if (globalStorageName in win && win[globalStorageName]) {
+		storage = win[globalStorageName][win.location.hostname]
 		api.set = function(key, val) { storage[key] = val }
 		api.setObject = function(key, val) { storage[key] = JSON.stringify(val) }
 		api.get = function(key) { return storage[key] && storage[key].value }
@@ -35,17 +36,17 @@ var store = (function(){
 			// See http://msdn.microsoft.com/en-us/library/ms531081(v=VS.85).aspx
 			// and http://msdn.microsoft.com/en-us/library/ms531424(v=VS.85).aspx
 			storage.addBehavior('#default#userData') 
-			storage.load(name)
+			storage.load(localStorageName)
 		}
 		api.set = function(key, val) {
 			if (!storage) { createStorage() }
 			storage.setAttribute(key, val)
-			storage.save(name)
+			storage.save(localStorageName)
 		}
 		api.setObject = function(key, val){
 			if (!storage) { createStorage() }
 			storage.setAttribute(key, JSON.stringify(val));
-			storage.save(name);
+			storage.save(localStorageName);
 		}
 		api.get = function(key) {
 			if (!storage) { createStorage() }
@@ -58,16 +59,16 @@ var store = (function(){
 		api.remove = function(key) {
 			if (!storage) { createStorage() }
 			storage.removeAttribute(key)
-			storage.save(name)
+			storage.save(localStorageName)
 		}
 		api.clear = function() {
 			if (!storage) { createStorage() }
 			var attributes = storage.XMLDocument.documentElement.attributes;
-			storage.load(name)
+			storage.load(localStorageName)
 			for (var i=0, attr; attr = attributes[i]; i++) {
 				storage.removeAttribute(attr.name)
 			}
-			storage.save(name)
+			storage.save(localStorageName)
 		}
 	}
 	
