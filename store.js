@@ -5,9 +5,16 @@ var store = (function(){
 		u = undefined,
 		localStorageName = 'localStorage',
 		globalStorageName = 'globalStorage',
-		storage
+		storage,
+		json = win.JSON ? {
+		  s: win.JSON.stringify,
+		  p: win.JSON.parse
+		} : {
+		    s: function(o) { return o },
+		    p: function(s) { return s }
+		};
 
-	function _g(v, d) { return v == u ? d : v }
+	function _g(v, d) { return v == u ? d : json.p(v) }
 
 	api.set = function(key, value) {}
 	api.get = function(key, def) { return def }
@@ -16,7 +23,7 @@ var store = (function(){
 	
 	if (localStorageName in win && win[localStorageName]) {
 		storage = win[localStorageName]
-		api.set = function(key, val) { storage[key] = val }
+		api.set = function(key, val) { storage[key] = json.s(val) }
 		api.get = function(key, def) { return _g(storage[key], def) }
 		api.remove = function(key) { delete storage[key] }
 		api.clear = function() { storage.clear() }
@@ -31,7 +38,7 @@ var store = (function(){
 			}
 			api.set = function(key, val) {
 				if (!storage) { createStorage() }
-				storage.setAttribute(key, val)
+				storage.setAttribute(key, json.s(val))
 				storage.save(localStorageName)
 			}
 			api.get = function(key, def) {
@@ -54,7 +61,7 @@ var store = (function(){
 			}
 	} else if (globalStorageName in win && win[globalStorageName]) {
 		storage = win[globalStorageName][win.location.hostname]
-		api.set = function(key, val) { storage[key] = val }
+		api.set = function(key, val) { storage[key] = json.s(val) }
 		api.get = function(key, def) { return _g(storage[key] && storage[key].value, def) }
 		api.remove = function(key) { delete storage[key] }
 		api.clear = function() { for (var key in storage ) { delete storage[key] } }
